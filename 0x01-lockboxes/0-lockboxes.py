@@ -19,7 +19,7 @@
 def canUnlockAll(boxes):
     """Initialize to track unlocked boxes"""
     unlocked = [False] * len(boxes)
-    Unlocked[0] = True
+    unlocked[0] = True
     keys = boxes[0]
     to_visit = [0]
 
