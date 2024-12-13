@@ -5,50 +5,36 @@
 
 
 def isWinner(x, nums):
-    def sieve_of_eratosthenes(n):
-        """ Create a boolean list for primes up to n(True means prime) """
-        primes = [True] * (n + 1)
-        primes[0] = primes[1] = False  # 0 and 1 are not prime numbers
-        for i in range(2, int(n ** 0.5) + 1):
-            if primes[i]:
-                for j in range(i * i, n + 1, i):
-                    primes[j] = False
-        return [i for i in range(2, n + 1) if primes[i]]
-
-    def simulate_game(n):
-        """ Generate the list of primes up to n """
-        primes = sieve_of_eratosthenes(n)
-        available_numbers = [True] * (n + 1)
-        player_turn = 0  # 0 for Maria, 1 for Ben
-
-        while True:
-            move = -1
-            for p in primes:
-                if p <= n and available_numbers[p]:
-                    move = p
-                    break
-
-            if move == -1:
-                return 1 - player_turn
-
-            for multiple in range(move, n + 1, move):
-                available_numbers[multiple] = False
-
-            player_turn = 1 - player_turn
-
-    maria_wins = 0
-    ben_wins = 0
-
-    for n in nums:
-        winner = simulate_game(n)
-        if winner == 0:
-            maria_wins += 1
-        else:
-            ben_wins += 1
-
-    if maria_wins > ben_wins:
-        return "Maria"
-    elif ben_wins > maria_wins:
-        return "Ben"
-    else:
+    """ x - rounds, nums - numbers list """
+    if x <= 0 or nums is None:
         return None
+    if x != len(nums):
+        return None
+
+    ben = 0
+    maria = 0
+
+    a = [1 for x in range(sorted(nums)[-1] + 1)]
+    a[0], a[1] = 0, 0
+    for i in range(2, len(a)):
+        rm_multiples(a, i)
+
+    for i in nums:
+        if sum(a[0:i + 1]) % 2 == 0:
+            ben += 1
+        else:
+            maria += 1
+    if ben > maria:
+        return "Ben"
+    if maria > ben:
+        return "Maria"
+    return None
+
+
+def rm_multiples(ls, x):
+    """ removes multiple of primes """
+    for i in range(2, len(ls)):
+        try:
+            ls[i * x] = 0
+        except (ValueError, IndexError):
+            break
